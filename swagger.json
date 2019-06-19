@@ -1,0 +1,583 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "description" : "User & Group Management API",
+    "version" : "2.0.0-oas3",
+    "title" : "User & Group Management API's",
+    "termsOfService" : "http://swagger.io/terms/",
+    "contact" : {
+      "email" : "rukshanabegam.j@happiestminds.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags" : [ {
+    "name" : "Users",
+    "description" : "Operations about users"
+  }, {
+    "name" : "groups",
+    "description" : "Operations about groups"
+  } ],
+  "paths" : {
+    "/users" : {
+      "post" : {
+        "tags" : [ "Users" ],
+        "summary" : "Invite user",
+        "description" : "Create and invite a new user in smartsheet",
+        "operationId" : "inviteUser",
+        "responses" : {
+          "201" : {
+            "description" : "User invited successfully."
+          },
+          "405" : {
+            "description" : "Invalid input"
+          }
+        },
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/User"
+        }
+      },
+      "get" : {
+        "tags" : [ "Users" ],
+        "summary" : "Get all users",
+        "description" : "Get all users in the account",
+        "operationId" : "getAllUser",
+        "responses" : {
+          "200" : {
+            "description" : "List of users"
+          },
+          "204" : {
+            "description" : "no content"
+          }
+        }
+      }
+    },
+    "/users/{id}" : {
+      "put" : {
+        "tags" : [ "Users" ],
+        "summary" : "Update user",
+        "description" : "Update a user in smartsheet",
+        "operationId" : "updateUser",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/idParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "User updated successfully."
+          },
+          "400" : {
+            "description" : "Invalid userId supplied"
+          },
+          "404" : {
+            "description" : "User not found"
+          }
+        },
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/User"
+        }
+      },
+      "get" : {
+        "tags" : [ "Users" ],
+        "summary" : "Get user by user id",
+        "description" : "",
+        "operationId" : "getUserById",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/idParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "400" : {
+            "description" : "Invalid userId supplied"
+          },
+          "404" : {
+            "description" : "User not found"
+          }
+        }
+      },
+      "patch" : {
+        "tags" : [ "Users" ],
+        "summary" : "Patch user",
+        "description" : "Patch user's permissions, profile, email",
+        "operationId" : "patchUser",
+        "responses" : {
+          "400" : {
+            "description" : "Invalid userId supplied"
+          },
+          "404" : {
+            "description" : "User not found"
+          }
+        },
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/idParam"
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/UserPermissions"
+                }, {
+                  "$ref" : "#/components/schemas/UserProfile"
+                }, {
+                  "$ref" : "#/components/schemas/UserSecondaryEmail"
+                } ]
+              }
+            }
+          },
+          "description" : "Pet object that needs to be added to the store",
+          "required" : true
+        }
+      },
+      "delete" : {
+        "tags" : [ "Users" ],
+        "summary" : "Delete user",
+        "description" : "Delete user from smartsheet.",
+        "operationId" : "deleteUser",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/idParam"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid userId supplied"
+          },
+          "404" : {
+            "description" : "User not found"
+          }
+        }
+      }
+    },
+    "/users/upload" : {
+      "post" : {
+        "tags" : [ "Users" ],
+        "summary" : "Ceate user list from uploaded file",
+        "description" : "Update bulk users format(name,email, )",
+        "operationId" : "uploadUsers",
+        "responses" : {
+          "207" : {
+            "description" : "User upload cummulative result."
+          },
+          "400" : {
+            "description" : "User data invalid. Please check the format."
+          }
+        },
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "description" : "The file to upload",
+                    "type" : "string",
+                    "format" : "binary"
+                  }
+                },
+                "required" : [ "file" ]
+              }
+            }
+          }
+        }
+      },
+      "patch" : {
+        "tags" : [ "Users" ],
+        "summary" : "Upload file to update user permissions",
+        "description" : "Update bulk user permissions",
+        "operationId" : "uploadUserPermissions",
+        "responses" : {
+          "207" : {
+            "description" : "User upload cummulative result."
+          },
+          "400" : {
+            "description" : "User data invalid. Please check the format."
+          }
+        },
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "description" : "The file to upload",
+                    "type" : "string",
+                    "format" : "binary"
+                  }
+                },
+                "required" : [ "file" ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}/inviteResponse" : {
+      "get" : {
+        "tags" : [ "Users" ],
+        "summary" : "Update user invite response",
+        "description" : "Update user invite response via GET",
+        "operationId" : "updateUserInviteResponse",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/idParam"
+        }, {
+          "name" : "response",
+          "in" : "query",
+          "description" : "This is the userId need to be provided to fetch user. ",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "ACCEPTED", "REJECTED" ]
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "User invite response processed."
+          },
+          "400" : {
+            "description" : "Invalid user information."
+          }
+        }
+      }
+    },
+    "/users/search" : {
+      "get" : {
+        "tags" : [ "Users" ],
+        "summary" : "Get users by search criteria",
+        "description" : "",
+        "operationId" : "getUserSummary",
+        "parameters" : [ {
+          "name" : "userPermission",
+          "in" : "query",
+          "description" : "This is the userId need to be provided to fetch user. ",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "List of users"
+          },
+          "204" : {
+            "description" : "no content"
+          }
+        }
+      }
+    },
+    "/groups" : {
+      "post" : {
+        "tags" : [ "groups" ],
+        "summary" : "Create group",
+        "description" : "Create new group in smartsheet",
+        "operationId" : "createGroup",
+        "responses" : {
+          "201" : {
+            "description" : "Group created successfully."
+          }
+        },
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Group"
+              }
+            }
+          },
+          "description" : "Created group object",
+          "required" : true
+        }
+      },
+      "put" : {
+        "tags" : [ "groups" ],
+        "summary" : "Update group",
+        "description" : "Update existing group in smartsheet",
+        "operationId" : "updateGroup",
+        "responses" : {
+          "200" : {
+            "description" : "Group updated successfully."
+          },
+          "400" : {
+            "description" : "Invalid groupId supplied"
+          },
+          "404" : {
+            "description" : "Group not found"
+          }
+        },
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Group"
+              }
+            }
+          },
+          "description" : "Updated group object",
+          "required" : true
+        }
+      },
+      "get" : {
+        "tags" : [ "groups" ],
+        "summary" : "Get all groups",
+        "description" : "",
+        "operationId" : "getAllGroup",
+        "responses" : {
+          "200" : {
+            "description" : "List of groups"
+          },
+          "204" : {
+            "description" : "no content"
+          }
+        }
+      }
+    },
+    "/groups/{id}" : {
+      "get" : {
+        "tags" : [ "groups" ],
+        "summary" : "Get group by group id",
+        "description" : "",
+        "operationId" : "getGroupById",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "This is the groupId need to be provided to fetch group. ",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "400" : {
+            "description" : "Invalid groupId supplied"
+          },
+          "404" : {
+            "description" : "Group not found"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "groups" ],
+        "summary" : "Delete group",
+        "description" : "Delete group from account.",
+        "operationId" : "deleteGroup",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "The groupId that needs to be deleted",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Invalid groupId supplied"
+          },
+          "404" : {
+            "description" : "Group not found"
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "groups" ],
+        "summary" : "Transfer group ownership",
+        "description" : "Transfer group ownership in smartsheet",
+        "operationId" : "TransferGroupOwnership",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "The groupId for which ownership needs to be changed",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Group ownership changed successfully."
+          },
+          "400" : {
+            "description" : "Invalid groupId supplied | Invalid owner email id supplied"
+          },
+          "404" : {
+            "description" : "Group not found"
+          }
+        },
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "string"
+              }
+            }
+          },
+          "description" : "new owner email id",
+          "required" : true
+        }
+      }
+    }
+  },
+  "servers" : [ {
+    "url" : "https://admincenterhost.com/v1"
+  }, {
+    "url" : "http://admincenterhost.com/v1"
+  } ],
+  "components" : {
+    "parameters" : {
+      "idParam" : {
+        "name" : "id",
+        "in" : "path",
+        "description" : "This is the userId need to be provided to fetch user. ",
+        "required" : true,
+        "schema" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    },
+    "requestBodies" : {
+      "User" : {
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/User"
+            }
+          }
+        },
+        "description" : "Created user object",
+        "required" : true
+      }
+    },
+    "schemas" : {
+      "User" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "firstName" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "userStatus" : {
+            "type" : "string",
+            "enum" : [ "INVITED", "ACTIVE", "INACTIVE" ]
+          },
+          "permissions" : {
+            "type" : "object",
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/UserPermissions"
+            } ]
+          },
+          "secondaryEmail" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "allOf" : [ {
+                "$ref" : "#/components/schemas/UserSecondaryEmail"
+              } ]
+            }
+          },
+          "profile" : {
+            "type" : "object",
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/UserProfile"
+            } ]
+          }
+        }
+      },
+      "UserSecondaryEmail" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          },
+          "verificationStatus" : {
+            "type" : "string",
+            "enum" : [ "VERIFIED", "PENDING_VERIFICATION" ]
+          }
+        }
+      },
+      "UserProfile" : {
+        "type" : "object",
+        "properties" : {
+          "firstName" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "department" : {
+            "type" : "string"
+          },
+          "company" : {
+            "type" : "string"
+          },
+          "workPhone" : {
+            "type" : "string"
+          },
+          "mobilePhone" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "jobCategory" : {
+            "type" : "string"
+          }
+        }
+      },
+      "UserPermissions" : {
+        "type" : "object",
+        "properties" : {
+          "systemAdmin" : {
+            "type" : "boolean"
+          },
+          "licensedAdmin" : {
+            "type" : "boolean"
+          },
+          "groupAdmin" : {
+            "type" : "boolean"
+          },
+          "resourceViewer" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "Group" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "memberEmailIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
